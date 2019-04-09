@@ -13,12 +13,9 @@ from . import User
 
 
 class BaseConcurrentModel(models.Model):
-	_version = IntegerVersionField()
-	_ctime = models.DateTimeField(auto_now_add=True)
-	_mtime = models.DateTimeField(auto_now=True)
+    _version = IntegerVersionField()
+    _ctime = models.DateTimeField(auto_now_add=True)
+    _mtime = models.DateTimeField(auto_now=True)
 
-	class Meta:
-		abstract = True
-
-
-
+    class Meta:
+        abstract = True
