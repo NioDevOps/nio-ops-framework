@@ -61,15 +61,22 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/workflowDefine',
+    path: '/workflow',
     component: Layout,
     children: [
       {
         path: 'workflowDefine',
         name: 'workflowDefine',
+        hidden: true,
         component: () => import('@/views/workflow/workflowDefine'),
         meta: { title: 'Form', icon: 'form' }
-      }
+      },
+      {
+        path: 'workflowTemplate',
+        name: 'workflowDefine',
+        component: () => import('@/views/workflow/workflowTemplate'),
+        meta: { title: 'workflow template', icon: 'form' }
+      },
     ]
   },
 

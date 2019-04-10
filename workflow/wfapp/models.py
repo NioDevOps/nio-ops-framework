@@ -5,6 +5,7 @@ from polymorphic.models import PolymorphicModel
 from polymorphic.managers import PolymorphicManager
 import requests
 
+
 class BaseConcurrentModel(models.Model):
     _version = IntegerVersionField()
     _ctime = models.DateTimeField(auto_now_add=True)
@@ -95,6 +96,7 @@ class Workflow(models.Model):
     workflow_template = models.ForeignKey(WorkflowTemplate, on_delete=models.PROTECT)
 
 
+
 class Step(BaseConcurrentModel):
     step_status_choices = (
         ('waiting', 'waiting'),
@@ -105,9 +107,9 @@ class Step(BaseConcurrentModel):
     step_define = models.ForeignKey(StepDefine, on_delete=models.PROTECT)
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE)
     arguments = JSONField(default={})
-    step_status = models.CharField(choices=step_status_choices, max_length=255)
+    step_status = models.CharField(choices=step_status_choices, max_length=255, default='waiting')
     step_return = JSONField(default={})
-    from_step = models.ForeignKey('Step', null=True, on_delete=models.PROTECTzh)
+    from_step = models.ForeignKey('Step', null=True, on_delete=models.PROTECT)
 
     def commit(self):
         with transaction.atomic():

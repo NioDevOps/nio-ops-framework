@@ -10,23 +10,28 @@ class HttpHookSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class HookSerializer(serializers.HyperlinkedModelSerializer):
+class HookSerializer(serializers.ModelSerializer):
     model_serializer_mapping = {
         HttpHook: HttpHookSerializer,
     }
 
 
-class StepDefineSerializer(serializers.HyperlinkedModelSerializer):
+class StepDefineSerializer(serializers.ModelSerializer):
     class Meta:
         model = StepDefine
         fields = '__all__'
 
 
-class WorkflowTemplateSerializer(serializers.ListSerializer):
-    step_defines = StepDefineSerializer(many=True, required=False)
+class WorkflowTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkflowTemplate
         fields = '__all__'
 
 
+class WorkflowTemplateDetailSerializer(serializers.ModelSerializer):
+    step_defines = StepDefineSerializer(many=True, required=False)
+
+    class Meta:
+        model = WorkflowTemplate
+        fields = '__all__'

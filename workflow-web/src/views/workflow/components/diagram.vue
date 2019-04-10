@@ -5,7 +5,7 @@ import go from 'gojs'
 let $ = go.GraphObject.make
 export default{
 	name : 'diagram',
-	props: ['modelData'],
+	props: ['modelData', 'linkDrawn', 'textEdited', 'selectionDeleting'],
 	data(){
 		return {diagram: null, palette: null}
 	},
@@ -42,6 +42,12 @@ export default{
               if (idx >= 0) document.title = document.title.substr(0, idx);
             }
           });
+          // SelectionDeleting
+          myDiagram.addDiagramListener("SelectionDeleting", this.selectionDeleting)
+          // TextEdited
+          myDiagram.addDiagramListener("TextEdited", this.textEdited)
+          // linkdrawn
+          myDiagram.addDiagramListener("LinkDrawn", this.linkDrawn)
           // To simplify this code we define a function for creating a context menu button:
           function makeButton(text, action, visiblePredicate) {
             return $("ContextMenuButton",
