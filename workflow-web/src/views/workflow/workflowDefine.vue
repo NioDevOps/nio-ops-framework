@@ -86,7 +86,7 @@
           (v,k)=> {
             let delete_d = v.part.data
             if(delete_d.from!=undefined){
-              deletelinkStepDefine(delete_d.to, delete_d.from, delete_d.frompid)
+              deletelinkStepDefine(delete_d.from, delete_d.to, delete_d.frompid)
                 .then(
                   console.log('success')
                 )
