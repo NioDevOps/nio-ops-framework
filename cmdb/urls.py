@@ -25,16 +25,16 @@ from cmdb.rest import views
 # )
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-router.register(r'services', views.ServiceViewSet)
-router.register(r'normal-services', views.NormalServiceViewSet)
-router.register(r'db-services', views.DbServiceViewSet)
-router.register(r'dbs', views.DbViewSet)
-router.register(r'resources', views.BaseResourceViewSet)
-router.register(r'servers', views.ServerViewSet)
-router.register(r'server-types', views.ServerTypeViewSet)
-router.register(r'departments', views.DepartmentViewSet)
+router.register(r'user', views.UserViewSet)
+router.register(r'group', views.GroupViewSet)
+router.register(r'service', views.ServiceViewSet)
+router.register(r'normal-service', views.NormalServiceViewSet)
+router.register(r'db-service', views.DbServiceViewSet)
+router.register(r'db', views.DbViewSet)
+router.register(r'resource', views.BaseResourceViewSet)
+router.register(r'server', views.ServerViewSet)
+router.register(r'server-type', views.ServerTypeViewSet)
+router.register(r'department', views.DepartmentViewSet)
 router.register(r'db-instance', views.DbInstanceViewSet)
 
 urlpatterns = [
@@ -47,8 +47,8 @@ urlpatterns = [
     # path(r'api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     #
     path('v1/', include(router.urls)),
-    path('api/services/tree', views.query_service_tree),
-    path('api/departments/tree', views.query_department_tree),
+    path('api/service/tree', views.query_service_tree),
+    path('api/department/tree', views.query_department_tree),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('admin/', admin.site.urls),
     path(r'', TemplateView.as_view(template_name="index.html")),

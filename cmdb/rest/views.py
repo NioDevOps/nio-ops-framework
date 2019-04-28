@@ -51,6 +51,7 @@ def recursive_node_to_dict(node):
     result = {
         'id': node.pk,
         'title': node.name,
+        'type': str(node.polymorphic_ctype)
     }
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
@@ -135,6 +136,18 @@ class ServiceViewSet(viewsets.ModelViewSet):
     """
     queryset = service.BaseService.objects.all()
     serializer_class = ServiceSerializer
+
+    @action(methods=['get'], detail=True)
+    def path(self, request, *args, **kwargs):
+        s = self.get_object()
+        # serializer_context = {
+        #     'request': request,
+        # }
+        # serializer = ServiceSerializer(s.path(), context=serializer_context, many=True)
+        # return Response(serializer.data)
+        response = {}
+        response['result'] = s.path()
+        return JsonResponse(response)
 
 class NormalServiceViewSet(viewsets.ModelViewSet):
     """
