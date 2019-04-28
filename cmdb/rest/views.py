@@ -136,6 +136,19 @@ class ServiceViewSet(viewsets.ModelViewSet):
     queryset = service.BaseService.objects.all()
     serializer_class = ServiceSerializer
 
+class NormalServiceViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = service.NormalService.objects.all()
+    serializer_class = NormalServiceSerializer
+
+class DbServiceViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = service.MysqlService.objects.all()
+    serializer_class = DbServiceSerializer
 
 class BaseResourceViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
@@ -189,6 +202,14 @@ class DbInstanceViewSet(viewsets.ModelViewSet):
     queryset = resources.DbInstance.objects.all()
     serializer_class = DbInstanceSerializer
 
+class DbViewSet(viewsets.ModelViewSet):
+    # authentication_classes = (authentication.JWTAuthentication,)
+    #permission_classes = (permissions.IsAuthenticated,)
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = resources.Db.objects.all()
+    serializer_class = DbSerializer
 
 class ServerTypeViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)

@@ -28,10 +28,10 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
 
-class ServiceSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = service.BaseService
-        fields = "__all__"
+# class ServiceSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = service.BaseService
+#         fields = "__all__"
 
 
 class LabelSerializer(serializers.HyperlinkedModelSerializer):
@@ -74,6 +74,12 @@ class ServerSerializer(serializers.ModelSerializer):
         return r
 
 
+class DbSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = resources.Db
+        fields = "__all__"
+
+
 class DbInstanceSerializer(serializers.ModelSerializer):
     labels = LabelSerializer(many=True, required=False)
     interfaces = InterfaceSerializer(many=True, required=False)
@@ -105,5 +111,23 @@ class ResourceSerializer(PolymorphicSerializer):
     interfaces = InterfaceSerializer(many=True, required=False)
     departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=False)
 
+
+class NormalServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = service.NormalService
+        fields = "__all__"
+
+
+class DbServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = service.MysqlService
+        fields = "__all__"
+
+
+class ServiceSerializer(PolymorphicSerializer):
+    model_serializer_mapping = {
+        service.MysqlService: DbServiceSerializer,
+        service.NormalService: NormalServiceSerializer,
+    }
 
 
