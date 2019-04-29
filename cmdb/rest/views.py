@@ -50,9 +50,10 @@ class ResourceAccessPermission(permissions.BasePermission):
 def recursive_node_to_dict(node):
     result = {
         'id': node.pk,
-        'title': node.name,
-        'type': str(node.polymorphic_ctype)
+        'title': node.name
     }
+    if hasattr(node, 'polymorphic_ctype'):
+        result['type'] = str(node.polymorphic_ctype)
     children = [recursive_node_to_dict(c) for c in node.get_children()]
     if children:
         result['children'] = children
@@ -160,7 +161,7 @@ class DbServiceViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
     """
-    queryset = service.MysqlService.objects.all()
+    queryset = service.DbService.objects.all()
     serializer_class = DbServiceSerializer
 
 class BaseResourceViewSet(viewsets.ModelViewSet):

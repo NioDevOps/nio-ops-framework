@@ -5,20 +5,19 @@ from django_extensions.db.fields.json import JSONField
 # from polymorphic.models import PolymorphicModel
 # from polymorphic.managers import PolymorphicManager
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
+from simple_history.models import HistoricalRecords
 # class AbBaseService(PolymorphicModel)
 
 
 class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
     parent = PolymorphicTreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    resources = models.ManyToManyField(BaseResource, blank=True, through='ServiceResourcesRelation')
     name = models.CharField(max_length=64)
     tree_path_cache = models.CharField(max_length=255, blank=True,  null=True)
     info = models.CharField(max_length=255)
 
     def save(self, *args, **kwargs):
-        if self.pk:
-            self.tree_path_cache = self.path()
-        else:
-            self.tree_path_cache = self.path(new=True)
+        self.tree_path_cache = self.path(new=False if self.pk else True)
         super(BaseService, self).save(*args, **kwargs)
 
     class Meta(PolymorphicMPTTModel.Meta):
@@ -43,17 +42,37 @@ class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
 
 class NormalService(BaseService):
     git = models.CharField(max_length=255)
-    resources = models.ManyToManyField(BaseResource, blank=True)
     objects = PolymorphicManager()
+    history = HistoricalRecords()
 
     class Meta(PolymorphicMPTTModel.Meta):
         verbose_name = "normal-service"
         verbose_name_plural = "normal-services"
 
 
-class MysqlService(BaseService):
-    dbs = models.ManyToManyField(Db)
+class Version(BaseConcurrentModel):
+    service = models.ForeignKey(BaseService, on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=255)
+
+
+class ServiceResourcesRelation(models.Model):
+    history = HistoricalRecords()
+    service = models.ForeignKey(BaseService, on_delete=models.CASCADE)
+    resource = models.ForeignKey(BaseResource, on_delete=models.CASCADE)
+    version = models.ForeignKey(Version, null=True, on_delete=models.PROTECT)
+    _ctime = models.DateTimeField(auto_now_add=True)
+    _mtime = models.DateTimeField(auto_now=True)
+
+
+class DbService(BaseService):
+    use_types = (
+        ('shard', 'shard'),
+        ('master-slave', 'master-slave'),
+        ('pxc', 'pxc'),
+    )
+    history = HistoricalRecords()
     objects = PolymorphicManager()
+    use_type = models.CharField(choices=use_types, null=False, max_length=255)
 
     class Meta(PolymorphicMPTTModel.Meta):
         verbose_name = "db-service"

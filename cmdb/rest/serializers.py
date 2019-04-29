@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     groups = serializers.StringRelatedField(many=True, required=False)
 
     class Meta:
@@ -105,6 +105,7 @@ class DbInstanceSerializer(serializers.ModelSerializer):
 class ResourceSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
         resources.Server: ServerSerializer,
+        resources.Db: DbSerializer,
         resources.DbInstance: DbInstanceSerializer,
     }
     labels = LabelSerializer(many=True, required=False)
@@ -120,13 +121,13 @@ class NormalServiceSerializer(serializers.ModelSerializer):
 
 class DbServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = service.MysqlService
+        model = service.DbService
         fields = "__all__"
 
 
 class ServiceSerializer(PolymorphicSerializer):
     model_serializer_mapping = {
-        service.MysqlService: DbServiceSerializer,
+        service.DbService: DbServiceSerializer,
         service.NormalService: NormalServiceSerializer,
     }
 

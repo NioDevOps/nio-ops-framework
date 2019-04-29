@@ -2,6 +2,7 @@ from django_cryptography.fields import encrypt
 from django_extensions.db.fields.json import JSONField
 from polymorphic.models import PolymorphicModel
 from polymorphic.managers import PolymorphicManager
+from simple_history.models import HistoricalRecords
 from .base import *
 from . import Department
 
@@ -13,6 +14,7 @@ class BaseResource(PolymorphicModel,BaseConcurrentModel):  #
 
 
 class Interface(models.Model):
+    history = HistoricalRecords()
     interface_type = (
         (1, 'ipv4'),
         (2, 'ipv6'),
@@ -25,6 +27,7 @@ class Interface(models.Model):
 
 
 class Label(models.Model):
+    history = HistoricalRecords()
     resource = models.ForeignKey(BaseResource, on_delete=models.CASCADE, related_name='labels')
     k = models.CharField(u'k', max_length=64, blank=False, null=False)
     v = models.CharField(u'v', max_length=64, blank=False, null=False)
@@ -42,6 +45,7 @@ class K8sCluster(BaseResource):
 
 
 class Container(BaseResource):
+    history = HistoricalRecords()
     cpu = models.IntegerField()
     mem = models.IntegerField()
     replicas = models.IntegerField(default=3)
@@ -51,21 +55,26 @@ class Container(BaseResource):
 
 class ServerType(BaseConcurrentModel):
     name = models.CharField(u'机器类型', max_length=64, blank=False, null=False)
-
+    history = HistoricalRecords()
 
 class Server(BaseResource):
+    history = HistoricalRecords()
     server_type = models.ForeignKey(ServerType, on_delete=models.PROTECT)
 
 
 class DbInstance(BaseResource):
+    history = HistoricalRecords()
     manage_user = models.CharField(u'管理账户', max_length=64, blank=False, null=False)
-    manage_password = encrypt(models.CharField(max_length=50))
+    manage_password = encrypt(models.CharField(max_length=50, blank=False, null=False))
     port = models.IntegerField(default=3306)
     base_resource = models.ForeignKey(BaseResource, null=True, on_delete=models.CASCADE, related_name="belong_resource")
 
 
-class Db(BaseConcurrentModel):
-    name = models.CharField(max_length=64, blank=False, null=False)
+class Db(BaseResource):
+    history = HistoricalRecords()
+    user = models.CharField(u'管理账户', max_length=64, blank=False, null=False)
+    password = encrypt(models.CharField(max_length=50, blank=False, null=False))
+    extra_args = JSONField(default={})
     db_instance = models.ForeignKey("DbInstance", on_delete=models.CASCADE)
 
 

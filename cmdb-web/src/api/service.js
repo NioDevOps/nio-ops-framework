@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getServiceTree(data) {
   return request({
-    url: '/api/services/tree',
+    url: '/api/service/tree',
     method: 'get',
     data
   })
