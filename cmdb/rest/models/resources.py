@@ -7,7 +7,7 @@ from .base import *
 from . import Department
 
 
-class BaseResource(PolymorphicModel,BaseConcurrentModel):  #
+class BaseResource(PolymorphicModel, BaseConcurrentModel):  #
     name = models.CharField(u'资源名', max_length=64, blank=False, null=False)
     departments = models.ManyToManyField(Department, default=[])
     objects = PolymorphicManager()
@@ -16,14 +16,22 @@ class BaseResource(PolymorphicModel,BaseConcurrentModel):  #
 class Interface(models.Model):
     history = HistoricalRecords()
     interface_type = (
-        (1, 'ipv4'),
-        (2, 'ipv6'),
-        (3, 'host'),
-        (4, 'url'),
+        ('ipv4', 'ipv4'),
+        ('ipv6', 'ipv6'),
     )
     resource = models.ForeignKey(BaseResource, on_delete=models.CASCADE, related_name='interfaces')
-    type = models.IntegerField(choices=interface_type, null=False)
+    type = models.CharField(choices=interface_type, max_length=64, null=False)
     address = models.CharField(max_length=64, null=False)
+
+    class Meta:
+        unique_together = ["resource", "type", "address"]
+        index_together = ["resource", "type", "address"]
+
+    def __unicode__(self):
+        return '%s: %s' % (self.type, self.address)
+
+    def __eq__(self, obj):
+        return str(self) == str(obj)
 
 
 class Label(models.Model):

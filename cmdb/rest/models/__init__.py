@@ -13,7 +13,7 @@ class Department(MPTTModel):
 
 class User(AbstractUser):
     name = models.CharField(u'中文名', max_length=32, blank=False, null=False)
-    departments = models.ManyToManyField(Department, related_name="members")
+    departments = models.ManyToManyField(Department, related_name="members", blank=True)
 
     def expend_department_nodes(self):
         return self.departments.all().get_descendants(include_self=True)

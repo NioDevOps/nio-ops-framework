@@ -51,6 +51,7 @@ class NormalService(BaseService):
 
 
 class Version(BaseConcurrentModel):
+    history = HistoricalRecords()
     service = models.ForeignKey(BaseService, on_delete=models.DO_NOTHING)
     name = models.CharField(max_length=255)
 

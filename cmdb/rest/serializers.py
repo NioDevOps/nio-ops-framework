@@ -5,8 +5,14 @@ from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
 
 
+class GroupsStringRelatedField(serializers.StringRelatedField):
+    def to_internal_value(self, value):
+        g = Group.objects.filter(name=value)
+        return g.get().pk
+
+
 class UserSerializer(serializers.ModelSerializer):
-    groups = serializers.StringRelatedField(many=True, required=False)
+    groups = GroupsStringRelatedField(many=True, required=False)
 
     class Meta:
         model = User
@@ -61,6 +67,22 @@ class ServerSerializer(serializers.ModelSerializer):
         model = resources.Server
         fields = "__all__"
 
+    def update(self, instance, validated_data):
+        labels = validated_data.pop('labels', [])
+        interfaces = validated_data.pop('interfaces', [])
+        departments = validated_data.pop('departments', [])
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        # instance.interfaces.set([resources.Interface(**x) for x in interfaces], bulk=False)
+        # instance.labels.set(labels)
+        # instance.departments.set(departments)
+        # resources.Label.objects.filter(resource=instance).delete()
+        # resources.Interface.objects.filter(resource=instance).delete()
+        # resources.Label.objects.bulk_create([resources.Label(resource=instance, **label) for label in labels])
+        # resources.Interface.objects.bulk_create(
+        #     [resources.Interface(resource=instance, **interface) for interface in interfaces])
+        return instance
+
     def create(self, validated_data):
         labels = validated_data.pop('labels', [])
         interfaces = validated_data.pop('interfaces', [])
@@ -92,7 +114,7 @@ class DbInstanceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         labels = validated_data.pop('labels', [])
         interfaces = validated_data.pop('interfaces', [])
-        departments = validated_data.pop('departments', [])
+        departments = validated_data.pop('departlments', [])
         r = resources.DbInstance.objects.create(**validated_data)
         for x in departments:
             r.departments.add(x)
