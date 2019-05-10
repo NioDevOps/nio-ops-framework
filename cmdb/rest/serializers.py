@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group
-from .models import *
+from .models import resources, service
 from .models import User, Department
 from rest_framework import serializers
 from rest_polymorphic.serializers import PolymorphicSerializer
