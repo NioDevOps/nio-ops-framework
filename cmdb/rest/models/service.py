@@ -12,9 +12,10 @@ from simple_history.models import HistoricalRecords
 class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
     parent = PolymorphicTreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     resources = models.ManyToManyField(BaseResource, blank=True, through='ServiceResourcesRelation')
+    departments = models.ManyToManyField(Department, default=[])
     name = models.CharField(max_length=64)
-    tree_path_cache = models.CharField(max_length=255, blank=True,  null=True)
-    info = models.CharField(max_length=255)
+    tree_path_cache = models.CharField(max_length=255, blank=True,  null=True, help_text="不可编辑字段,描述路径缓存")
+    info = models.CharField(max_length=255, help_text="详情描述字段")
 
     def save(self, *args, **kwargs):
         self.tree_path_cache = self.path(new=False if self.pk else True)
@@ -40,8 +41,21 @@ class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
         return '/'.join(p)
 
 
+class ServiceLabel(models.Model):
+    history = HistoricalRecords()
+    service = models.ForeignKey(BaseService, on_delete=models.CASCADE, related_name='labels')
+    k = models.CharField(u'k', max_length=64, blank=False, null=False)
+    v = models.CharField(u'v', max_length=64, blank=False, null=False)
+
+    class Meta:
+        unique_together = ["service", "k", "v"]
+        index_together = ["service", "k", "v"]
+
+    def __unicode__(self):
+        return '%s: %s' % (self.k, self.v)
+
+
 class NormalService(BaseService):
-    git = models.CharField(max_length=255)
     objects = PolymorphicManager()
     history = HistoricalRecords()
 

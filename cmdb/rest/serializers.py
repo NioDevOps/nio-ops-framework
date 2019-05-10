@@ -46,6 +46,12 @@ class LabelSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('k', 'v')
 
 
+class ServiceLabelSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = service.ServiceLabel
+        fields = ('k', 'v')
+
+
 class ServerTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = resources.ServerType
@@ -136,9 +142,20 @@ class ResourceSerializer(PolymorphicSerializer):
 
 
 class NormalServiceSerializer(serializers.ModelSerializer):
+    labels = ServiceLabelSerializer(many=True, required=False)
+
     class Meta:
         model = service.NormalService
         fields = "__all__"
+
+    def create(self, validated_data):
+        labels = validated_data.pop('labels', [])
+        #departments = validated_data.pop('departments', [])
+        r = service.NormalService.objects.create(**validated_data)
+        # for x in departments:
+        #     r.departments.add(x)
+        service.ServiceLabel.objects.bulk_create([service.ServiceLabel(service=r, **label) for label in labels])
+        return r
 
 
 class DbServiceSerializer(serializers.ModelSerializer):
@@ -152,5 +169,6 @@ class ServiceSerializer(PolymorphicSerializer):
         service.DbService: DbServiceSerializer,
         service.NormalService: NormalServiceSerializer,
     }
+    labels = ServiceLabelSerializer(many=True, required=False)
 
 

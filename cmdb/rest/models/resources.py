@@ -65,6 +65,7 @@ class ServerType(BaseConcurrentModel):
     name = models.CharField(u'机器类型', max_length=64, blank=False, null=False)
     history = HistoricalRecords()
 
+
 class Server(BaseResource):
     history = HistoricalRecords()
     server_type = models.ForeignKey(ServerType, on_delete=models.PROTECT)

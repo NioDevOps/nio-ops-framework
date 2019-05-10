@@ -7,11 +7,11 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import treeTableRouter from './modules/tree-table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import treeTableRouter from './modules/tree-table'
+// import nestedRouter from './modules/nested'
 import resourceRouter from './modules/resource'
 
 /** note: sub-menu only appear when children.length>=1
@@ -110,6 +110,7 @@ export const constantRoutes = [
   //
   {
     path: '/documentation',
+    hidden: true,
     component: Layout,
     children: [
       {
@@ -122,6 +123,7 @@ export const constantRoutes = [
   },
   {
     path: '/guide',
+    hidden: true,
     component: Layout,
     redirect: '/guide/index',
     children: [
@@ -144,6 +146,7 @@ export default new Router({
 export const asyncRoutes = [
   {
     path: '/permission',
+    hidden: true,
     component: Layout,
     redirect: '/permission/index',
     alwaysShow: true, // will always show the root menu
@@ -186,6 +189,7 @@ export const asyncRoutes = [
   {
     path: '/icon',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -197,16 +201,16 @@ export const asyncRoutes = [
   },
 
   /** When your routing table is too long, you can split it into small modules**/
-  componentsRouter,
-  chartsRouter,
-  nestedRouter,
-  tableRouter,
-  treeTableRouter,
-
+  // componentsRouter,
+  // chartsRouter,
+  // nestedRouter,
+  // tableRouter,
+  // treeTableRouter,
 
   {
     path: '/example',
     component: Layout,
+    hidden: true,
     redirect: '/example/list',
     name: 'Example',
     meta: {
@@ -238,6 +242,7 @@ export const asyncRoutes = [
 
   {
     path: '/tab',
+    hidden: true,
     component: Layout,
     children: [
       {
@@ -251,6 +256,7 @@ export const asyncRoutes = [
 
   {
     path: '/error',
+    hidden: true,
     component: Layout,
     redirect: 'noredirect',
     name: 'ErrorPages',
@@ -276,6 +282,7 @@ export const asyncRoutes = [
 
   {
     path: '/error-log',
+    hidden: true,
     component: Layout,
     redirect: 'noredirect',
     children: [
@@ -290,6 +297,7 @@ export const asyncRoutes = [
 
   {
     path: '/excel',
+    hidden: true,
     component: Layout,
     redirect: '/excel/export-excel',
     name: 'Excel',
@@ -327,6 +335,7 @@ export const asyncRoutes = [
 
   {
     path: '/zip',
+    hidden: true,
     component: Layout,
     redirect: '/zip/download',
     alwaysShow: true,
@@ -343,6 +352,7 @@ export const asyncRoutes = [
 
   {
     path: '/pdf',
+    hidden: true,
     component: Layout,
     redirect: '/pdf/index',
     children: [
@@ -363,6 +373,7 @@ export const asyncRoutes = [
   {
     path: '/theme',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     children: [
       {
@@ -377,6 +388,7 @@ export const asyncRoutes = [
   {
     path: '/clipboard',
     component: Layout,
+    hidden: true,
     redirect: 'noredirect',
     children: [
       {
@@ -391,6 +403,7 @@ export const asyncRoutes = [
   {
     path: '/i18n',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'index',
@@ -404,6 +417,7 @@ export const asyncRoutes = [
   {
     path: 'external-link',
     component: Layout,
+    hidden: true,
     children: [
       {
         path: 'https://github.com/PanJiaChen/vue-element-admin',

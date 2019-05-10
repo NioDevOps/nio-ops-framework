@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from cmdb.rest.serializers import *
+from .serializers import *
 from .models import *
 import json
 from mptt.templatetags.mptt_tags import cache_tree_children
@@ -150,12 +150,14 @@ class ServiceViewSet(viewsets.ModelViewSet):
         response['result'] = s.path()
         return JsonResponse(response)
 
+
 class NormalServiceViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited.
+    标准服务crud api.
     """
     queryset = service.NormalService.objects.all()
     serializer_class = NormalServiceSerializer
+
 
 class DbServiceViewSet(viewsets.ModelViewSet):
     """
@@ -163,6 +165,7 @@ class DbServiceViewSet(viewsets.ModelViewSet):
     """
     queryset = service.DbService.objects.all()
     serializer_class = DbServiceSerializer
+
 
 class BaseResourceViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
@@ -216,6 +219,7 @@ class DbInstanceViewSet(viewsets.ModelViewSet):
     queryset = resources.DbInstance.objects.all()
     serializer_class = DbInstanceSerializer
 
+
 class DbViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
     #permission_classes = (permissions.IsAuthenticated,)
@@ -224,6 +228,7 @@ class DbViewSet(viewsets.ModelViewSet):
     """
     queryset = resources.Db.objects.all()
     serializer_class = DbSerializer
+
 
 class ServerTypeViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)

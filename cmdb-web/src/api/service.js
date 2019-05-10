@@ -7,3 +7,12 @@ export function getServiceTree(data) {
     data
   })
 }
+
+export function postNormalService(data) {
+  return request({
+    url: '/v1/normal-service/',
+    method: 'post',
+    data
+  })
+}
+

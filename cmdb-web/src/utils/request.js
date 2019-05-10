@@ -13,7 +13,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // Do something before request is sent
-    let token = store.getters.token ||getToken()
+    const token = store.getters.token || getToken()
     if (token) {
       // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
       config.headers['Authorization'] = 'Token ' + token
@@ -65,9 +65,9 @@ service.interceptors.response.use(
   //   }
   // },
   error => {
-    console.log('err' + error) // for debug
+    console.log(error.response.data) // for debug
     Message({
-      message: error.message,
+      message: error.response.data || error.message,
       type: 'error',
       duration: 5 * 1000
     })
