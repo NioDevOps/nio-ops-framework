@@ -6,7 +6,6 @@ from django_extensions.db.fields.json import JSONField
 # from polymorphic.managers import PolymorphicManager
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 from simple_history.models import HistoricalRecords
-# class AbBaseService(PolymorphicModel)
 
 
 class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
@@ -31,7 +30,7 @@ class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
             s = self
             while s.parent:
                 p.append(s.name)
-                s=s.parent
+                s = s.parent
             p.append(self.name)
             return '/'.join(p)
 
@@ -80,15 +79,12 @@ class ServiceResourcesRelation(models.Model):
 
 
 class DbService(BaseService):
-    use_types = (
-        ('shard', 'shard'),
-        ('master-slave', 'master-slave'),
-        ('pxc', 'pxc'),
-    )
     history = HistoricalRecords()
     objects = PolymorphicManager()
-    use_type = models.CharField(choices=use_types, null=False, max_length=255)
 
     class Meta(PolymorphicMPTTModel.Meta):
         verbose_name = "db-service"
         verbose_name_plural = "db-services"
+
+
+

@@ -167,6 +167,8 @@ class DbServiceViewSet(viewsets.ModelViewSet):
     serializer_class = DbServiceSerializer
 
 
+
+
 class BaseResourceViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
     #permission_classes = (permissions.IsAuthenticated,)
@@ -209,6 +211,7 @@ class ServerViewSet(viewsets.ModelViewSet):
 # 		depts = user.expend_department_nodes()
 # 		queryset = self.queryset.filter(departments__in=depts)
 # 	return queryset.distinct()
+
 
 class DbInstanceViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
