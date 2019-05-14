@@ -5,13 +5,15 @@ stages:
 
 before_script:
   - which python3
-job 1:
+  - which pip3
+  - pip3 install -r requirements.txt
+job migrate:
   before_script:
     - python3 manage.py makemigrations rest
   stage: build
   script: python3 manage.py migrate rest
 
-job 2:
+job run:
   stage:
   script: python3 manage.py runserver 0.0.0.0:8000
 
