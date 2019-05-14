@@ -1,0 +1,1 @@
+netstat -ntpl|grep '0.0.0.0:8000' |awk '{print $NF}'|awk -F/ '{cmd="kill -9 "$1;system(cmd);}'

@@ -18,7 +18,7 @@ job migrate:
 
 job run:
   before_script:
-    - netstat -ntpl|grep 8000 |awk '{print $NF}'|awk -F/ '{cmd="kill -9 "$1;system(cmd);}'
+    - sh stop_cmdb.sh
   stage: build
-  script: nohup python3 manage.py runserver 0.0.0.0:8000 &
+  script: nohup python3 manage.py runserver 0.0.0.0:8000 > /tmp/nohup.out &
 
