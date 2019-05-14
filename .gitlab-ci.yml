@@ -4,10 +4,11 @@ stages:
   - deploy
 
 before_script:
-  which python3
+  - which python3
 job 1:
-  before_script: python3 manage.py makemigrations rest
-  stage: make migrate
+  before_script:
+    - python3 manage.py makemigrations rest
+  stage: build
   script: python3 manage.py migrate rest
 
 job 2:
