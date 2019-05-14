@@ -3,10 +3,13 @@ stages:
   - test
   - deploy
 
-before_script:
-  - which python3
-  - which pip3
-  - pip3 install -r requirements.txt
+job install:
+  before_script:
+    - which python3
+    - which pip3
+  stage: build
+  script: pip3 install -r requirements.txt
+
 job migrate:
   before_script:
     - python3 manage.py makemigrations rest
