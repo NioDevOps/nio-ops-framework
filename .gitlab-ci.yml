@@ -9,16 +9,22 @@ job install:
     - which pip3
   stage: build
   script: pip3 install -r requirements.txt
+  only:
+    - master
 
 job migrate:
   before_script:
     - python3 manage.py makemigrations rest
   stage: build
   script: python3 manage.py migrate rest
+  only:
+    - master
 
 job run:
   before_script:
     - sh stop_cmdb.sh
   stage: build
   script: sh start_cmdb.sh
+  only:
+    - master
 
