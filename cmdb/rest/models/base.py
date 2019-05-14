@@ -1,7 +1,5 @@
 from django.db import models
 from concurrency.fields import IntegerVersionField
-from . import User
-
 
 # class UserProfile(models.Model):
 #     user = models.OneToOneField(User)

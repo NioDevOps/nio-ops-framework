@@ -1,0 +1,16 @@
+stages:
+  - build
+  - test
+  - deploy
+
+before_script:
+  which python3
+job 1:
+  before_script: python3 manage.py makemigrations rest
+  stage: make migrate
+  script: python3 manage.py migrate rest
+
+job 2:
+  stage:
+  script: python3 manage.py runserver 0.0.0.0:8000
+

@@ -11,8 +11,9 @@ def custom_exception_handler(exc, context):
 
     if response is not None:
         response.data['status_code'] = response.status_code
-        response.data['message'] = response.data['detail']    #增加message这个key
-        del response.data['detail']
+        response.data['message'] = response.data.get('detail')    #增加message这个key
+        if 'detail' in response.data:
+            del response.data['detail']
         # response.data['message'] ='方法不对'    #增加message这个key
     else:
         data = {'status_code': 500, 'message': str(exc)}

@@ -19,8 +19,6 @@ from rest_framework.authtoken.models import Token
 from concurrency.fields import IntegerVersionField
 
 
-
-
 class DepartmentReadFilterBackend(BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
@@ -137,6 +135,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
     """
     queryset = service.BaseService.objects.all()
     serializer_class = ServiceSerializer
+    filter_backends = [DepartmentReadFilterBackend]
 
     @action(methods=['get'], detail=True)
     def path(self, request, *args, **kwargs):
@@ -167,8 +166,6 @@ class DbServiceViewSet(viewsets.ModelViewSet):
     serializer_class = DbServiceSerializer
 
 
-
-
 class BaseResourceViewSet(viewsets.ModelViewSet):
     # authentication_classes = (authentication.JWTAuthentication,)
     #permission_classes = (permissions.IsAuthenticated,)
@@ -181,7 +178,7 @@ class BaseResourceViewSet(viewsets.ModelViewSet):
     """
     queryset = service.BaseResource.objects.all()
     serializer_class = ResourceSerializer
-    #filter_backends = [DepartmentReadFilterBackend]
+    filter_backends = [DepartmentReadFilterBackend]
 
     def get_queryset(self):
         rt = self.request.query_params.get('resourcetype', None)

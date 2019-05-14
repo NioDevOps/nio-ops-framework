@@ -101,7 +101,7 @@ class DbSerializer(AbResourceSerializer):
 
 class DbInstanceSerializer(AbResourceSerializer):
     labels = LabelSerializer(many=True, required=False)
-    departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=False)
+    departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=True)
 
     class Meta:
         model = resources.DbInstance

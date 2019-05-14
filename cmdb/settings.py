@@ -93,6 +93,11 @@ DATABASES = {
         'PASSWORD': 'redhat',
         'HOST': '127.0.0.1',
         'PORT': '3306',
+        'OPTIONS': {
+            'init_command': 'SET default_storage_engine=INNODB,character_'
+                            'set_connection=utf8,collation_connection=utf8_unicode_ci;'
+        },
+        'charset': 'utf8'
     }
 }
 
@@ -128,6 +133,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'PAGE_SIZE': 20,
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.permissions.IsAuthenticated',
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',

@@ -11,7 +11,7 @@ from simple_history.models import HistoricalRecords
 class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
     parent = PolymorphicTreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     resources = models.ManyToManyField(BaseResource, blank=True, through='ServiceResourcesRelation')
-    departments = models.ManyToManyField(Department, default=[])
+    departments = models.ManyToManyField(Department)
     name = models.CharField(max_length=64)
     tree_path_cache = models.CharField(max_length=255, blank=True,  null=True, help_text="不可编辑字段,描述路径缓存")
     info = models.CharField(max_length=255, help_text="详情描述字段")

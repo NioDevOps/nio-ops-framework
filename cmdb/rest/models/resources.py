@@ -9,7 +9,7 @@ from . import Department
 
 class BaseResource(PolymorphicModel, BaseConcurrentModel):  #
     name = models.CharField(u'资源名', max_length=64, blank=False, null=False)
-    departments = models.ManyToManyField(Department, default=[])
+    departments = models.ManyToManyField(Department)
     objects = PolymorphicManager()
 
 
