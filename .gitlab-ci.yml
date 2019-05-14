@@ -17,6 +17,8 @@ job migrate:
   script: python3 manage.py migrate rest
 
 job run:
+  before_script:
+    - netstat -ntpl|grep 8000 |awk '{print $NF}'|awk -F/ '{cmd="kill -9" $1;system(cmd);}'
   stage:
-  script: python3 manage.py runserver 0.0.0.0:8000
+  script: nohup python3 manage.py runserver 0.0.0.0:8000 &
 
