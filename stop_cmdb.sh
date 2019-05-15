@@ -1,1 +1,1 @@
-netstat -ntpl|grep '0.0.0.0:8000' |awk '{print $NF}'|awk -F/ '{cmd="kill -9 "$1;system(cmd);}'
+ps -ef |grep 'runserver 0.0.0.0:8000'|grep -v grep|awk '{cmd="kill -9 "$2; system(cmd);}'
