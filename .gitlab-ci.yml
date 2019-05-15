@@ -24,7 +24,7 @@ job run:
   before_script:
     - sh stop_cmdb.sh
   stage: deploy
-  script: sh start_cmdb.sh
+  script: sh start_cmdb.sh &
   only:
     - master
 
