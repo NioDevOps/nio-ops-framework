@@ -20,11 +20,11 @@ job migrate:
   only:
     - master
 
-job run:
-  before_script:
-    - sh stop_cmdb.sh
-  stage: deploy
-  script: nohup sh start_cmdb.sh &
-  only:
-    - master
+# job run:
+#   before_script:
+#     - sh stop_cmdb.sh
+#   stage: deploy
+#   script: nohup sh start_cmdb.sh &
+#   only:
+#     - master
 
