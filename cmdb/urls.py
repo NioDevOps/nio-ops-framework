@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
-from rest_framework import routers
+#from rest_framework import routers
+from rest_framework_nested import routers
 from .rest import views
 from rest_framework.documentation import include_docs_urls
+
 
 # from rest_framework_simplejwt.views import (
 #     TokenObtainPairView,
@@ -26,11 +28,14 @@ from rest_framework.documentation import include_docs_urls
 #     TokenVerifyView,
 # )
 
+#router = routers.DefaultRouter()
 router = routers.DefaultRouter()
 router.register(r'user', views.UserViewSet)
 router.register(r'group', views.GroupViewSet)
 router.register(r'service', views.ServiceViewSet)
-router.register(r'normal-service', views.NormalServiceViewSet)
+service_router = routers.NestedSimpleRouter(router, r'service', lookup='service')
+service_router.register(r'resources', views.BaseResourceViewSet, base_name='service-resources')
+router.register(r'normalservice', views.NormalServiceViewSet)
 router.register(r'db-service', views.DbServiceViewSet)
 router.register(r'db', views.DbViewSet)
 router.register(r'resource', views.BaseResourceViewSet)
@@ -49,6 +54,7 @@ urlpatterns = [
     # path(r'api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     #
     path('v1/', include(router.urls)),
+    path('v1/', include(service_router.urls)),
     path('api/service/tree', views.query_service_tree),
     path('api/department/tree', views.query_department_tree),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

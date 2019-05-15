@@ -11,8 +11,8 @@ from simple_history.models import HistoricalRecords
 class BaseService(PolymorphicMPTTModel, BaseConcurrentModel):
     parent = PolymorphicTreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     resources = models.ManyToManyField(BaseResource, blank=True, through='ServiceResourcesRelation')
-    departments = models.ManyToManyField(Department)
-    name = models.CharField(max_length=64)
+    departments = models.ManyToManyField(Department, blank=True)
+    name = models.CharField(max_length= 64)
     tree_path_cache = models.CharField(max_length=255, blank=True,  null=True, help_text="不可编辑字段,描述路径缓存")
     info = models.CharField(max_length=255, help_text="详情描述字段")
 
@@ -73,9 +73,13 @@ class ServiceResourcesRelation(models.Model):
     history = HistoricalRecords()
     service = models.ForeignKey(BaseService, on_delete=models.CASCADE)
     resource = models.ForeignKey(BaseResource, on_delete=models.CASCADE)
-    version = models.ForeignKey(Version, null=True, on_delete=models.PROTECT)
+    version = models.CharField(max_length=255, null=True)
     _ctime = models.DateTimeField(auto_now_add=True)
     _mtime = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ["service", "resource"]
+        index_together = ["service", "resource"]
 
 
 class DbService(BaseService):

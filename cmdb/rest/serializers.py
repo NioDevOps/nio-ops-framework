@@ -34,6 +34,21 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ServiceResourceRelatedField(serializers.RelatedField):
+    """
+    A read only field that represents its targets using their
+    plain string representation.
+    """
+
+    def __init__(self, **kwargs):
+        kwargs['read_only'] = True
+        super(ServiceResourceRelatedField, self).__init__(**kwargs)
+
+    def to_representation(self, value):
+        version = value.serviceresourcesrelation_set.get().version
+        return {'id': value.pk, 'name': value.name, 'version': version}
+
+
 # resource serializer
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -129,6 +144,9 @@ class AbServiceSerializer(serializers.ModelSerializer):
     抽象service serializer
     """
     labels = ServiceLabelSerializer(many=True, required=False)
+    resources = ServiceResourceRelatedField(read_only=True, many=True)
+    #read_only_fields = ()
+
 
     def create(self, validated_data):
         labels = validated_data.pop('labels', [])
@@ -153,6 +171,8 @@ class NormalServiceSerializer(AbServiceSerializer):
     class Meta:
         model = service.NormalService
         fields = "__all__"
+        fields = ('id', 'labels', '_version', '_ctime', '_mtime', 'name',
+                  'info', 'tree_path_cache', 'info', 'parent', 'departments', 'resources')
 
 
 class DbServiceSerializer(AbServiceSerializer):

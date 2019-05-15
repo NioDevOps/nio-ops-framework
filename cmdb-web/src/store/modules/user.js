@@ -75,8 +75,9 @@ const user = {
           const data = response.data
           if (data.groups && data.groups.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.groups)
+          } else {
+            commit('SET_ROLES', ['guest'])
           }
-
           commit('SET_NAME', data.username)
           // commit('SET_AVATAR', data.avatar)
           // commit('SET_INTRODUCTION', data.introduction)
@@ -122,24 +123,24 @@ const user = {
         removeToken()
         resolve()
       })
-    },
+    }
 
     // 动态修改权限
-    ChangeRoles({ commit, dispatch }, role) {
-      return new Promise(resolve => {
-        commit('SET_TOKEN', role)
-        // setToken(role)
-        getUserInfo(role).then(response => {
-          const data = response.data
-          commit('SET_ROLES', data.roles)
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
-          commit('SET_INTRODUCTION', data.introduction)
-          dispatch('GenerateRoutes', data) // 动态修改权限后 重绘侧边菜单
-          resolve()
-        })
-      })
-    }
+    // ChangeRoles({ commit, dispatch }, role) {
+    //   return new Promise(resolve => {
+    //     commit('SET_TOKEN', role)
+    //     // setToken(role)
+    //     getUserInfo(role).then(response => {
+    //       const data = response.data
+    //       commit('SET_ROLES', data.roles)
+    //       commit('SET_NAME', data.name)
+    //       commit('SET_AVATAR', data.avatar)
+    //       commit('SET_INTRODUCTION', data.introduction)
+    //       dispatch('GenerateRoutes', data) // 动态修改权限后 重绘侧边菜单
+    //       resolve()
+    //     })
+    //   })
+    // }
   }
 }
 
