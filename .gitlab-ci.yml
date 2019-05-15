@@ -15,7 +15,7 @@ job install:
 job migrate:
   before_script:
     - python3 manage.py makemigrations rest
-  stage: build
+  stage: test
   script: python3 manage.py migrate rest
   only:
     - master
@@ -23,7 +23,7 @@ job migrate:
 job run:
   before_script:
     - sh stop_cmdb.sh
-  stage: build
+  stage: deploy
   script: sh start_cmdb.sh
   only:
     - master
