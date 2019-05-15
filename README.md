@@ -29,6 +29,5 @@ python manage.py createsuperuser
 - python3 manage.py makemigrations --settings cmdb.settings
 - python3 manage.py migrate --run-syncdb --settings cmdb.settings
 
-
 ## 启动cmdb服务
 ./manage.py runserver --settings cmdb.settings
