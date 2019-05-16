@@ -4,6 +4,11 @@
       <el-form-item label="Name" prop="name">
         <el-input v-model="form.name" />
       </el-form-item>
+      <el-form-item label="resourcetype" prop="resourcetype">
+        <el-select v-model="form.resourcetype">
+          <el-option value="NormalService">NormalService</el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="Info" prop="info">
         <el-input v-model="form.info" type="textarea" />
       </el-form-item>
@@ -15,7 +20,7 @@
   </el-dialog>
 </template>
 <script>
-import { postNormalService } from '@/api/service'
+import { postService } from '@/api/service'
 
 export default {
   name: 'ServiceDlg',
@@ -25,7 +30,7 @@ export default {
   },
   data() {
     return {
-      service_type: 'normal-service',
+      service_type: 'NormalService',
       create_mode: 'create',
       open: false,
       form: {},
@@ -56,7 +61,7 @@ export default {
       )
     },
     create() {
-      postNormalService(this.form)
+      postService(this.form)
         .then(
           (resp) => {
             this.$message.success('success')

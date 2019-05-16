@@ -7,7 +7,6 @@ def custom_exception_handler(exc, context):
     # to get the standard error response.
     response = exception_handler(exc, context)
     # Now add the HTTP status code to the response.
-
     if response is not None:
         response.data['status_code'] = response.status_code
         response.data['message'] = response.data.get('detail')    #增加message这个key
@@ -18,3 +17,4 @@ def custom_exception_handler(exc, context):
         data = {'status_code': 500, 'message': str(exc)}
         response = Response(data, status=500)
     return response
+

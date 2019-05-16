@@ -18,7 +18,7 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 #from rest_framework import routers
 from rest_framework_nested import routers
-from .rest import views
+from .rest import views, exception_handler
 from rest_framework.documentation import include_docs_urls
 
 
@@ -62,3 +62,5 @@ urlpatterns = [
     path('docs', include_docs_urls(title="CMDB API DOC")),
     path(r'', TemplateView.as_view(template_name="index.html")),
 ]
+
+
