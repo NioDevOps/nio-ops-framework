@@ -9,7 +9,7 @@ from . import Department
 
 class BaseResource(PolymorphicModel, BaseConcurrentModel):  #
     name = models.CharField(u'资源名', max_length=64, blank=False, null=False)
-    departments = models.ManyToManyField(Department, default=[])
+    departments = models.ManyToManyField(Department, blank=True)
     objects = PolymorphicManager()
 
 
@@ -73,17 +73,12 @@ class Server(BaseResource):
 
 class DbInstance(BaseResource):
     history = HistoricalRecords()
-    manage_user = models.CharField(u'管理账户', max_length=64, blank=False, null=False)
-    manage_password = encrypt(models.CharField(max_length=50, blank=False, null=False))
     port = models.IntegerField(default=3306)
-    base_resource = models.ForeignKey(BaseResource, null=True, on_delete=models.CASCADE, related_name="belong_resource")
+    belong_server = models.ForeignKey(Server, null=True, on_delete=models.CASCADE, related_name="belong_server")
 
 
 class Db(BaseResource):
     history = HistoricalRecords()
-    user = models.CharField(u'管理账户', max_length=64, blank=False, null=False)
-    password = encrypt(models.CharField(max_length=50, blank=False, null=False))
-    extra_args = JSONField(default={})
     db_instance = models.ForeignKey("DbInstance", on_delete=models.CASCADE)
 
 

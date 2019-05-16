@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import importlib
 from datetime import timedelta
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'fy89-emnyzq*uag24-j@-%9+*((-ng&@gc4dr!)i6vf!tdq(30'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -93,6 +95,11 @@ DATABASES = {
         'PASSWORD': 'redhat',
         'HOST': '127.0.0.1',
         'PORT': '3306',
+        'OPTIONS': {
+            'init_command': 'SET default_storage_engine=INNODB,character_'
+                            'set_connection=utf8,collation_connection=utf8_unicode_ci;'
+        },
+        'charset': 'utf8'
     }
 }
 
@@ -128,6 +135,8 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
     'PAGE_SIZE': 20,
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         # 'rest_framework.permissions.IsAuthenticated',
         # 'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -173,3 +182,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# $DJANGO_ENVIRONMENT is set
+ENVIRONMENT = os.getenv("DJANGO_ENVIRONMENT", "")
+
+if ENVIRONMENT:
+    env_settings = importlib.import_module(ENVIRONMENT)
+    globals().update(env_settings.__dict__)

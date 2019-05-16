@@ -53,7 +53,7 @@ export default {
       let titleClass = node.selected ? 'node-title node-selected' : 'node-title'
       if (node.searched) titleClass += ' node-searched'
       return <span>
-        <svg-icon icon-class='peoples' />
+        <svg-icon icon-class='tab' />
         <span class={titleClass} domPropsInnerHTML={node.title} ></span>
         <el-button size='mini' onClick={ () => this.openCreateDlg(node.id)}> add </el-button>
       </span>

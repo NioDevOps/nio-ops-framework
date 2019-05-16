@@ -25,7 +25,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 
-class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
+class DepartmentSerializer(serializers.ModelSerializer):
     members = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects, required=False)
     leaders = serializers.PrimaryKeyRelatedField(many=True, queryset=User.objects, required=False)
 
@@ -34,100 +34,93 @@ class DepartmentSerializer(serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
 
-# class ServiceSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         model = service.BaseService
-#         fields = "__all__"
+class ServiceResourceRelatedField(serializers.RelatedField):
+    """
+    A read only field that represents its targets using their
+    plain string representation.
+    """
+
+    def __init__(self, **kwargs):
+        kwargs['read_only'] = True
+        super(ServiceResourceRelatedField, self).__init__(**kwargs)
+
+    def to_representation(self, value):
+        version = value.serviceresourcesrelation_set.get().version
+        return {'id': value.pk, 'name': value.name, 'version': version}
 
 
-class LabelSerializer(serializers.HyperlinkedModelSerializer):
+# resource serializer
+class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = resources.Label
         fields = ('k', 'v')
 
 
-class ServiceLabelSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = service.ServiceLabel
-        fields = ('k', 'v')
-
-
-class ServerTypeSerializer(serializers.HyperlinkedModelSerializer):
+class ServerTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = resources.ServerType
         fields = "__all__"
 
 
-class InterfaceSerializer(serializers.HyperlinkedModelSerializer):
+class InterfaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = resources.Interface
         fields = ('type', 'address')
 
 
-class ServerSerializer(serializers.ModelSerializer):
+class AbResourceSerializer(serializers.ModelSerializer):
+    """
+        resource serializer
+    """
     labels = LabelSerializer(many=True, required=False)
     interfaces = InterfaceSerializer(many=True, required=False)
-    departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=False)
 
-    class Meta:
-        model = resources.Server
-        fields = "__all__"
+    def create(self, validated_data):
+        labels = validated_data.pop('labels', [])
+        interfaces = validated_data.pop('interfaces', [])
+        departments = validated_data.pop('departments', [])
+        r = self.Meta.model.objects.create(**validated_data)
+        r.departments.set(departments)
+        r.interfaces.bulk_create(
+            [resources.Interface(resource=r, **interface) for interface in interfaces])
+        r.labels.bulk_create([resources.Label(resource=r, **label) for label in labels])
+        return r
 
     def update(self, instance, validated_data):
         labels = validated_data.pop('labels', [])
         interfaces = validated_data.pop('interfaces', [])
         departments = validated_data.pop('departments', [])
-        for k, v in validated_data.items():
-            setattr(instance, k, v)
-        # instance.interfaces.set([resources.Interface(**x) for x in interfaces], bulk=False)
-        # instance.labels.set(labels)
-        # instance.departments.set(departments)
-        # resources.Label.objects.filter(resource=instance).delete()
-        # resources.Interface.objects.filter(resource=instance).delete()
-        # resources.Label.objects.bulk_create([resources.Label(resource=instance, **label) for label in labels])
-        # resources.Interface.objects.bulk_create(
-        #     [resources.Interface(resource=instance, **interface) for interface in interfaces])
+        instance.__dict__.update(**validated_data)
+        instance.departments.set(departments)
+        instance.interfaces.all().delete()
+        instance.interfaces.bulk_create(
+            [resources.Interface(resource=instance, **interface) for interface in interfaces])
+        instance.labels.all().delete()
+        instance.labels.bulk_create([resources.Label(resource=instance, **label) for label in labels])
+        instance.save()
         return instance
 
-    def create(self, validated_data):
-        labels = validated_data.pop('labels', [])
-        interfaces = validated_data.pop('interfaces', [])
-        departments = validated_data.pop('departments', [])
-        r = resources.Server.objects.create(**validated_data)
-        for x in departments:
-            r.departments.add(x)
-        resources.Label.objects.bulk_create([resources.Label(resource=r, **label) for label in labels])
-        resources.Interface.objects.bulk_create(
-            [resources.Interface(resource=r, **interface) for interface in interfaces])
-        return r
+
+class ServerSerializer(AbResourceSerializer):
+
+    class Meta:
+        model = resources.Server
+        fields = "__all__"
 
 
-class DbSerializer(serializers.ModelSerializer):
+class DbSerializer(AbResourceSerializer):
     class Meta:
         model = resources.Db
         fields = "__all__"
 
 
-class DbInstanceSerializer(serializers.ModelSerializer):
+class DbInstanceSerializer(AbResourceSerializer):
     labels = LabelSerializer(many=True, required=False)
-    interfaces = InterfaceSerializer(many=True, required=False)
-    departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=False)
+    departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=True)
 
     class Meta:
         model = resources.DbInstance
         fields = "__all__"
-
-    def create(self, validated_data):
-        labels = validated_data.pop('labels', [])
-        interfaces = validated_data.pop('interfaces', [])
-        departments = validated_data.pop('departlments', [])
-        r = resources.DbInstance.objects.create(**validated_data)
-        for x in departments:
-            r.departments.add(x)
-        resources.Label.objects.bulk_create([resources.Label(resource=r, **label) for label in labels])
-        resources.Interface.objects.bulk_create(
-            [resources.Interface(resource=r, **interface) for interface in interfaces])
-        return r
 
 
 class ResourceSerializer(PolymorphicSerializer):
@@ -136,29 +129,53 @@ class ResourceSerializer(PolymorphicSerializer):
         resources.Db: DbSerializer,
         resources.DbInstance: DbInstanceSerializer,
     }
-    labels = LabelSerializer(many=True, required=False)
-    interfaces = InterfaceSerializer(many=True, required=False)
-    departments = serializers.PrimaryKeyRelatedField(many=True, queryset=Department.objects, required=False)
 
 
-class NormalServiceSerializer(serializers.ModelSerializer):
-    labels = ServiceLabelSerializer(many=True, required=False)
+# service serializer
 
+class ServiceLabelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = service.NormalService
-        fields = "__all__"
+        model = service.ServiceLabel
+        fields = ('k', 'v')
+
+
+class AbServiceSerializer(serializers.ModelSerializer):
+    """
+    抽象service serializer
+    """
+    labels = ServiceLabelSerializer(many=True, required=False)
+    resources = ServiceResourceRelatedField(read_only=True, many=True)
+    #read_only_fields = ()
+
 
     def create(self, validated_data):
         labels = validated_data.pop('labels', [])
-        #departments = validated_data.pop('departments', [])
-        r = service.NormalService.objects.create(**validated_data)
-        # for x in departments:
-        #     r.departments.add(x)
-        service.ServiceLabel.objects.bulk_create([service.ServiceLabel(service=r, **label) for label in labels])
+        departments = validated_data.pop('departments', [])
+        r = self.Meta.model.objects.create(**validated_data)
+        r.departments.set(departments)
+        r.labels.bulk_create([service.ServiceLabel(service=r, **label) for label in labels])
         return r
 
+    def update(self, instance, validated_data):
+        labels = validated_data.pop('labels', [])
+        departments = validated_data.pop('departments', [])
+        instance.__dict__.update(**validated_data)
+        instance.departments.set(departments)
+        instance.labels.all().delete()
+        instance.labels.bulk_create([service.ServiceLabel(service=instance, **label) for label in labels])
+        instance.save()
+        return instance
 
-class DbServiceSerializer(serializers.ModelSerializer):
+
+class NormalServiceSerializer(AbServiceSerializer):
+    class Meta:
+        model = service.NormalService
+        fields = "__all__"
+        fields = ('id', 'labels', '_version', '_ctime', '_mtime', 'name',
+                  'info', 'tree_path_cache', 'info', 'parent', 'departments', 'resources')
+
+
+class DbServiceSerializer(AbServiceSerializer):
     class Meta:
         model = service.DbService
         fields = "__all__"
@@ -169,6 +186,6 @@ class ServiceSerializer(PolymorphicSerializer):
         service.DbService: DbServiceSerializer,
         service.NormalService: NormalServiceSerializer,
     }
-    labels = ServiceLabelSerializer(many=True, required=False)
+
 
 

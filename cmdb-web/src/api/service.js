@@ -8,9 +8,9 @@ export function getServiceTree(data) {
   })
 }
 
-export function postNormalService(data) {
+export function postService(data) {
   return request({
-    url: '/v1/normal-service/',
+    url: '/v1/service/',
     method: 'post',
     data
   })
