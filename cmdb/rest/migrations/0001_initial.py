@@ -198,7 +198,7 @@ class Migration(migrations.Migration):
             name='DbService',
             fields=[
                 ('baseservice_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='rest.BaseService')),
-                ('use_type', models.CharField(choices=[('shard', 'shard'), ('master-slave', 'master-slave'), ('pxc', 'pxc')], max_length=255)),
+                ('use_type', models.CharField(choices=[('shard', 'shard'), ('main-subordinate', 'main-subordinate'), ('pxc', 'pxc')], max_length=255)),
             ],
             options={
                 'verbose_name': 'db-service',

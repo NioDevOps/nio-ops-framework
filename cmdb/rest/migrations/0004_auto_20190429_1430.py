@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
                 ('rght', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('level', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('use_type', models.CharField(choices=[('shard', 'shard'), ('master-slave', 'master-slave'), ('pxc', 'pxc')], max_length=255)),
+                ('use_type', models.CharField(choices=[('shard', 'shard'), ('main-subordinate', 'main-subordinate'), ('pxc', 'pxc')], max_length=255)),
                 ('history_id', models.AutoField(primary_key=True, serialize=False)),
                 ('history_date', models.DateTimeField()),
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
